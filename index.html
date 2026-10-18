@@ -258,6 +258,16 @@ body{
 .sol-toggle-btn.open .arrow{transform:rotate(90deg)}
 .sol-code{display:none;margin-top:8px}
 .sol-code.open{display:block}
+.code-wrap{position:relative}
+.btn-copy{
+  position:absolute;top:8px;right:8px;
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text2);padding:3px 8px;border-radius:var(--radius-sm);
+  font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;
+  transition:all .15s;z-index:2;
+}
+.btn-copy:hover{background:var(--bg4);color:var(--text);border-color:var(--blue)}
+.btn-copy.copied{background:var(--green2);color:var(--green);border-color:var(--green)}
 pre{
   background:#161b22;border:1px solid var(--border);
   border-radius:var(--radius-sm);
@@ -482,13 +492,34 @@ pre{
       </div>
     </div>
     <div class="nav-phase">
+      <div class="nav-phase-header" onclick="showQuiz()" style="color:var(--purple)">
+        <span class="ph-icon">🎯</span> Modo Quiz
+      </div>
+    </div>
+    <div class="nav-section-title" style="margin-top:10px">Referencia & Acordeones</div>
+    <div class="nav-phase">
       <div class="nav-phase-header" onclick="showAcordeon()">
         <span class="ph-icon">📖</span> Acordeón CL
       </div>
     </div>
     <div class="nav-phase">
-      <div class="nav-phase-header" onclick="showQuiz()" style="color:var(--purple)">
-        <span class="ph-icon">🎯</span> Modo Quiz
+      <div class="nav-phase-header" onclick="showRPG()">
+        <span class="ph-icon">📜</span> RPG III / OPM
+      </div>
+    </div>
+    <div class="nav-phase">
+      <div class="nav-phase-header" onclick="showRPGLE()">
+        <span class="ph-icon">⚙️</span> RPGLE ILE
+      </div>
+    </div>
+    <div class="nav-phase">
+      <div class="nav-phase-header" onclick="showRPGLEFree()">
+        <span class="ph-icon">🚀</span> RPGLE **FREE
+      </div>
+    </div>
+    <div class="nav-phase">
+      <div class="nav-phase-header" onclick="showSQLRPGLE()">
+        <span class="ph-icon">🗄️</span> SQLRPGLE & DB2
       </div>
     </div>
     <div class="nav-section-title" style="margin-top:10px">Progreso</div>
@@ -2881,11 +2912,14 @@ function buildSidebar() {
 }
 
 function toggleNavPhase(phaseId) {
-  const wasOpen = state.currentPhase === phaseId;
+  const exContainer = document.getElementById('navex-' + phaseId);
+  const wasOpen = state.currentPhase === phaseId && exContainer && exContainer.classList.contains('open');
+
   if (wasOpen) {
-    showPhase(phaseId);
+    if (exContainer) exContainer.classList.remove('open');
   } else {
     showPhase(phaseId);
+    if (exContainer) exContainer.classList.add('open');
   }
 }
 
@@ -2898,7 +2932,15 @@ function buildPhaseTabs() {
     <button class="phase-tab ${state.currentView === 'dashboard' ? 'active' : ''}"
             onclick="showDashboard()">🏠 Inicio</button>
     <button class="phase-tab ${state.currentView === 'acordeon' ? 'active' : ''}"
-            onclick="showAcordeon()" style="border-color:var(--purple2)">📖 Acordeón</button>
+            onclick="showAcordeon()" style="border-color:var(--purple2)">📖 CL</button>
+    <button class="phase-tab ${state.currentView === 'rpg' ? 'active' : ''}"
+            onclick="showRPG()" style="border-color:var(--blue)">📜 RPG III</button>
+    <button class="phase-tab ${state.currentView === 'rpgle' ? 'active' : ''}"
+            onclick="showRPGLE()" style="border-color:var(--blue)">⚙️ RPGLE</button>
+    <button class="phase-tab ${state.currentView === 'rpglefree' ? 'active' : ''}"
+            onclick="showRPGLEFree()" style="border-color:var(--green)">🚀 **FREE</button>
+    <button class="phase-tab ${state.currentView === 'sqlrpgle' ? 'active' : ''}"
+            onclick="showSQLRPGLE()" style="border-color:var(--orange)">🗄️ SQLRPGLE</button>
     <button class="phase-tab ${state.currentView === 'quiz' ? 'active' : ''}"
             onclick="showQuiz()" style="border-color:var(--purple)">🎯 Quiz</button>
     ${PHASES.map(p => {
@@ -2954,12 +2996,32 @@ function showDashboard() {
       <div onclick="showQuiz()" style="background:var(--bg2);border:1px solid var(--purple2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='var(--purple2)'">
         <div style="font-size:28px;margin-bottom:8px">🎯</div>
         <div style="font-weight:600;margin-bottom:4px">Modo Quiz</div>
-        <div style="font-size:12px;color:var(--text2)">Autoevaluación de 10 preguntas aleatorias</div>
+        <div style="font-size:12px;color:var(--text2)">Evaluación de preguntas y código interactivo</div>
       </div>
       <div onclick="showAcordeon()" style="background:var(--bg2);border:1px solid var(--blue3);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--blue3)'">
         <div style="font-size:28px;margin-bottom:8px">📖</div>
         <div style="font-weight:600;margin-bottom:4px">Acordeón CL</div>
-        <div style="font-size:12px;color:var(--text2)">~100 comandos IBM i con búsqueda</div>
+        <div style="font-size:12px;color:var(--text2)">Comandos del sistema IBM i / AS400</div>
+      </div>
+      <div onclick="showRPG()" style="background:var(--bg2);border:1px solid var(--blue2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--blue2)'">
+        <div style="font-size:28px;margin-bottom:8px">📜</div>
+        <div style="font-weight:600;margin-bottom:4px">RPG III / OPM</div>
+        <div style="font-size:12px;color:var(--text2)">Formato fijo (H,F,E,I,C,O)</div>
+      </div>
+      <div onclick="showRPGLE()" style="background:var(--bg2);border:1px solid var(--blue2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--blue2)'">
+        <div style="font-size:28px;margin-bottom:8px">⚙️</div>
+        <div style="font-weight:600;margin-bottom:4px">RPGLE ILE</div>
+        <div style="font-size:12px;color:var(--text2)">D-Specs, EVAL, %BIFs y CallP</div>
+      </div>
+      <div onclick="showRPGLEFree()" style="background:var(--bg2);border:1px solid var(--green2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--green2)'">
+        <div style="font-size:28px;margin-bottom:8px">🚀</div>
+        <div style="font-weight:600;margin-bottom:4px">RPGLE **FREE</div>
+        <div style="font-size:12px;color:var(--text2)">Sintaxis moderna totalmente libre</div>
+      </div>
+      <div onclick="showSQLRPGLE()" style="background:var(--bg2);border:1px solid var(--orange2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--orange)'" onmouseout="this.style.borderColor='var(--orange2)'">
+        <div style="font-size:28px;margin-bottom:8px">🗄️</div>
+        <div style="font-weight:600;margin-bottom:4px">SQLRPGLE & DB2</div>
+        <div style="font-size:12px;color:var(--text2)">SQL embebido, cursores y JSON</div>
       </div>
       <div onclick="exportProgress()" style="background:var(--bg2);border:1px solid var(--green2);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--green2)'">
         <div style="font-size:28px;margin-bottom:8px">📥</div>
@@ -3101,7 +3163,10 @@ function renderExCard(ex, phase) {
           <span class="arrow">▶</span> Mostrar solución
         </button>
         <div class="sol-code" id="sol-${ex.id}">
-          <pre>${solLines}</pre>
+          <div class="code-wrap">
+            <button class="btn-copy" onclick="copyToClipboard(decodeURIComponent('${encodeURIComponent(ex.solucion)}'), this)">📋 Copiar</button>
+            <pre>${solLines}</pre>
+          </div>
         </div>
       </div>
       <div class="ex-section">
@@ -3242,168 +3307,526 @@ function resetProgress() {
   showToast('🗑️ Progreso reiniciado', 'red');
 }
 
+
 /* ════════════════════════════════════════════════════════════════
-   MODO QUIZ
+   MODO QUIZ - BANCO DE PREGUNTAS MIXTO Y ENGINE INTERACTIVO
 ═══════════════════════════════════════════════════════════════ */
-let quizState = { active: false, exercises: [], idx: 0, score: 0, shown: false };
+
+const QUIZ_BANK = [
+  // ── OPCIÓN MÚLTIPLE (CHOICE) ───────────────────────────────────
+  {
+    type: 'choice',
+    category: 'CL / Sistema',
+    title: '¿Qué comando CL se utiliza para agregar una librería al inicio de la library list del job?',
+    options: [
+      'ADDLIBLE LIB(MILIB) POSITION(*FIRST)',
+      'CRTLIB LIB(MILIB) TYPE(*FIRST)',
+      'CHGLIBL LIB(MILIB) OPTION(*ADD)',
+      'WRKLIBL LIB(MILIB) ACTION(*FIRST)'
+    ],
+    correct: 0,
+    explanation: 'ADDLIBLE agrega la librería especificada a la library list. Con POSITION(*FIRST) se coloca al principio de la lista de usuario.',
+    hint: 'Piensa en el comando que empieza con ADD para LIBLE (library list entry).'
+  },
+  {
+    type: 'choice',
+    category: 'DDS / Base de Datos',
+    title: 'En DDS para Display Files (DSPF), ¿qué palabras clave de control activan la visualización del subfile y del control de subfile?',
+    options: [
+      'SFLIND y SFLACT',
+      'SFLDSP y SFLDSPCTL',
+      'SFLCLR y SFLEND',
+      'SFLPAGE y SFLSIZE'
+    ],
+    correct: 1,
+    explanation: 'SFLDSP habilita la visualización de los registros del subfile, mientras que SFLDSPCTL muestra la cabecera/control del subfile.',
+    hint: 'Busca las palabras clave que contienen DSP (Display) y DSPCTL (Display Control).'
+  },
+  {
+    type: 'choice',
+    category: 'RPG III / OPM',
+    title: 'En RPG III de formato fijo, ¿cuál es la diferencia principal entre las operaciones MOVE y MOVEL?',
+    options: [
+      'MOVE borra el campo destino; MOVEL no lo borra.',
+      'MOVE solo funciona con campos numéricos; MOVEL con alfanuméricos.',
+      'MOVE alinea los datos a la DERECHA; MOVEL los alinea a la IZQUIERDA.',
+      'MOVE se usa en C-Specs; MOVEL se usa en I-Specs.'
+    ],
+    correct: 2,
+    explanation: 'MOVE (Move Right) traslada el contenido alineándolo a la derecha del campo destino. MOVEL (Move Left) traslada el contenido alineándolo a la izquierda.',
+    hint: 'La L al final de MOVEL significa Left (Izquierda).'
+  },
+  {
+    type: 'choice',
+    category: 'RPGLE ILE',
+    title: 'En RPGLE ILE, ¿qué ventaja ofrece usar la palabra clave QUALIFIED en la declaración de una Data Structure?',
+    options: [
+      'Permite que la DS se guarde automáticamente en disco.',
+      'Obliga a acceder a los subcampos usando la notación DS.subcampo, evitando colisión de nombres.',
+      'Hace que la DS sea accesible por otros programas sin pasarla por parámetro.',
+      'Aumenta la velocidad de ejecución de las consultas SQL.'
+    ],
+    correct: 1,
+    explanation: 'QUALIFIED califica los campos de la DS con su nombre de estructura (dsNombre.subcampo), permitiendo reusar nombres de campo iguales en distintas estructuras.',
+    hint: 'Relacionado con calificar el acceso a subcampos como "estructura.campo".'
+  },
+  {
+    type: 'choice',
+    category: 'RPGLE **FREE',
+    title: 'En RPGLE **FREE, ¿qué estructura se utiliza para capturar y manejar excepciones o errores en tiempo de ejecución de forma segura?',
+    options: [
+      'TRY ... CATCH ... ENDTRY',
+      'MONITOR ... ON-ERROR ... ENDMON',
+      'BEGIN-TRAP ... ON-FAIL ... END-TRAP',
+      'CHECK-ERROR ... HANDLE ... END-CHECK'
+    ],
+    correct: 1,
+    explanation: 'MONITOR delimita el bloque protegido. Si ocurre una excepción, la ejecución salta al bloque ON-ERROR correspondiente sin cancelar el programa.',
+    hint: 'Comienza con la palabra MONITOR.'
+  },
+  {
+    type: 'choice',
+    category: 'SQLRPGLE / DB2',
+    title: 'En un programa SQLRPGLE, ¿cuál debe ser la PRIMERA sentencia EXEC SQL ejecutada para configurar el nivel de compromiso transaccional?',
+    options: [
+      'EXEC SQL SET TRANSACTION ISOLATION LEVEL CS;',
+      'EXEC SQL SET OPTION COMMIT = *CHG;',
+      'EXEC SQL DECLARE TRANSACTION LEVEL *CHG;',
+      'EXEC SQL OPTION ISOLATION = *CHG;'
+    ],
+    correct: 1,
+    explanation: 'EXEC SQL SET OPTION configura las opciones globales de compilación SQL, incluyendo COMMIT (*NONE, *CHG, *CS, *ALL). Debe ser la primera sentencia EXEC SQL.',
+    hint: 'Utiliza SET OPTION COMMIT = ...'
+  },
+  {
+    type: 'choice',
+    category: 'ILE / Service Programs',
+    title: '¿Qué comando de creación se utiliza para empaquetar uno o más módulos ILE (.MODULE) en un Service Program (.SRVPGM)?',
+    options: [
+      'CRTPGM',
+      'CRTSRVPGM',
+      'CRTBNDDIR',
+      'UPDPGM'
+    ],
+    correct: 1,
+    explanation: 'CRTSRVPGM toma los módulos compilados con CRTRPGMOD y crea el Service Program (.SRVPGM) exportando sus funciones.',
+    hint: 'Las siglas SRVPGM significan Service Program.'
+  },
+  {
+    type: 'choice',
+    category: 'SQLRPGLE / DB2',
+    title: '¿Qué valor del SQLSTATE retornado por DB2 indica que una consulta SELECT INTO o un FETCH no encontró filas (NOT FOUND)?',
+    options: [
+      '\'00000\'',
+      '\'02000\'',
+      '\'08001\'',
+      '\'42704\''
+    ],
+    correct: 1,
+    explanation: 'El SQLSTATE \'02000\' indica "No Data / Row Not Found". SQLSTATE \'00000\' indica éxito total.',
+    hint: 'Empieza con 02 e indica fin de datos o registro no localizado.'
+  },
+  {
+    type: 'choice',
+    category: 'DDS / Base de Datos',
+    title: '¿Cuál es la diferencia entre un Physical File (PF) y un Logical File (LF) en IBM i?',
+    options: [
+      'El PF almacena físicamente los datos; el LF proporciona una vista o ruta de acceso sobre uno o más PFs.',
+      'El LF guarda los datos y el PF solo contiene índices.',
+      'El PF no admite claves de acceso; el LF sí.',
+      'El PF es para pantallas y el LF es para tablas.'
+    ],
+    correct: 0,
+    explanation: 'El Physical File contiene los datos reales. El Logical File no guarda datos propios, sino que define un orden (clave) o filtro sobre los datos del PF.',
+    hint: 'El PF es la tabla real y el LF es una vista o índice.'
+  },
+  {
+    type: 'choice',
+    category: 'RPGLE **FREE',
+    title: 'En RPGLE **FREE, ¿cuál es la diferencia entre DCL-PR y DCL-PI?',
+    options: [
+      'DCL-PR es la interfaz del procedimiento; DCL-PI es el prototipo.',
+      'DCL-PR es el prototipo (firma externa); DCL-PI es la interfaz interna de implementación del procedimiento/programa.',
+      'DCL-PR se usa para archivos; DCL-PI se usa para variables.',
+      'DCL-PR solo funciona en SQL; DCL-PI solo en CL.'
+    ],
+    correct: 1,
+    explanation: 'DCL-PR (Prototype) declara la firma ejecutable externa. DCL-PI (Procedure Interface) declara e implementa los parámetros en el propio cuerpo del procedimiento o programa.',
+    hint: 'PR = Prototype, PI = Procedure Interface.'
+  },
+
+  // ── ESCRITURA DE CÓDIGO (CODE) ───────────────────────────────────
+  {
+    type: 'code',
+    category: 'CL / Programación',
+    title: 'Escribe el comando CL para declarar una variable de tipo carácter de longitud 10 llamada &FECHA.',
+    instructions: 'Escribe la instrucción DCL VAR(...) completa en mayúsculas o minúsculas.',
+    keywords: ['DCL', 'VAR(&FECHA)', 'TYPE(*CHAR)', 'LEN(10)'],
+    solution: 'DCL VAR(&FECHA) TYPE(*CHAR) LEN(10)',
+    placeholder: 'Ej: DCL VAR(&FECHA) TYPE(*CHAR) LEN(10)',
+    hint: 'Usa el comando DCL especificando VAR, TYPE(*CHAR) y LEN(10).'
+  },
+  {
+    type: 'code',
+    category: 'RPGLE **FREE',
+    title: 'Escribe la declaración DCL-S para crear una variable llamada vMonto de tipo PACKED decimal de 9 dígitos con 2 decimales e inicializada en 0.',
+    instructions: 'Escribe la sentencia completa terminada en punto y coma (;).',
+    keywords: ['DCL-S', 'VMONTO', 'PACKED(9:2)', 'INZ(0)'],
+    solution: 'DCL-S vMonto PACKED(9:2) INZ(0);',
+    placeholder: 'Ej: DCL-S vMonto PACKED(9:2) INZ(0);',
+    hint: 'Estructura: DCL-S nombre PACKED(9:2) INZ(0);'
+  },
+  {
+    type: 'code',
+    category: 'RPGLE **FREE / BD',
+    title: 'Escribe el comando RPGLE **FREE para buscar por clave en la tabla LIBROS (formato de registro LIBREC) usando el código pCodLib.',
+    instructions: 'Escribe la sentencia CHAIN completa.',
+    keywords: ['CHAIN', 'PCODLIB', 'LIBREC'],
+    solution: 'CHAIN pCodLib LIBREC;',
+    placeholder: 'Ej: CHAIN pCodLib LIBREC;',
+    hint: 'Sintaxis: CHAIN clave formatoRegistro;'
+  },
+  {
+    type: 'code',
+    category: 'SQLRPGLE',
+    title: 'Escribe la sentencia SQL embebida para seleccionar el campo SOCNOM de la tabla BIBLIOTECA/SOCIOS asignándolo a la host variable :vNombre donde SOCCOD sea igual a :pCodSoc.',
+    instructions: 'Incluye la estructura EXEC SQL y termina en punto y coma (;).',
+    keywords: ['EXEC', 'SQL', 'SELECT', 'SOCNOM', 'INTO', ':VNOMBRE', 'FROM', 'SOCIOS', 'WHERE', 'SOCCOD', ':PCODSOC'],
+    solution: 'EXEC SQL SELECT SOCNOM INTO :vNombre FROM BIBLIOTECA/SOCIOS WHERE SOCCOD = :pCodSoc;',
+    placeholder: 'Ej: EXEC SQL SELECT SOCNOM INTO :vNombre FROM BIBLIOTECA/SOCIOS WHERE SOCCOD = :pCodSoc;',
+    hint: 'Recuerda usar EXEC SQL SELECT ... INTO :variable FROM ... WHERE ...;'
+  },
+  {
+    type: 'code',
+    category: 'RPGLE **FREE / BIFs',
+    title: 'Escribe la expresión RPGLE **FREE para eliminar los espacios en blanco iniciales y finales de la variable vNombre y asignarla a vLimpio.',
+    instructions: 'Usa la BIF %TRIM y termina con punto y coma (;).',
+    keywords: ['VLIMPIO', '%TRIM(VNOMBRE)'],
+    solution: 'vLimpio = %TRIM(vNombre);',
+    placeholder: 'Ej: vLimpio = %TRIM(vNombre);',
+    hint: 'Sintaxis: vLimpio = %TRIM(vNombre);'
+  },
+  {
+    type: 'code',
+    category: 'CL / Manejo de Errores',
+    title: 'Escribe el comando MONMSG para capturar cualquier mensaje de error de la familia CPF (CPF0000) en un programa CL y saltar a la etiqueta ERROR.',
+    instructions: 'Escribe el comando MONMSG completo.',
+    keywords: ['MONMSG', 'MSGID(CPF0000)', 'EXEC(GOTO', 'CMDLBL(ERROR))'],
+    solution: 'MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))',
+    placeholder: 'Ej: MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))',
+    hint: 'Sintaxis: MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))'
+  }
+];
+
+let quizState = {
+  active: false,
+  questions: [],
+  idx: 0,
+  score: 0,
+  submitted: false,
+  selectedChoice: null,
+  userCode: '',
+  hintShown: false
+};
 
 function showQuiz() {
   state.currentView = 'quiz';
   state.currentPhase = null;
   saveState();
-  document.getElementById('page-title').textContent = '🎯 Modo Quiz';
-  document.getElementById('page-sub').textContent = 'Autoevaluación — responde sin ver la solución';
+  document.getElementById('page-title').textContent = '🎯 Modo Quiz Interactivo';
+  document.getElementById('page-sub').textContent = 'Evaluación mixta — Preguntas de Opción Múltiple y Escritura de Código';
   buildPhaseTabs();
   buildSidebar();
 
-  // Filtrar ejercicios pendientes o todos
-  const all = getAllExercises();
-  const pending = all.filter(e => !state.completed[e.id]);
-  const pool = pending.length >= 5 ? pending : all;
-  // Mezclar aleatoriamente
-  const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 10);
-  quizState = { active: true, exercises: shuffled, idx: 0, score: 0, shown: false };
+  const shuffled = [...QUIZ_BANK].sort(() => Math.random() - 0.5).slice(0, 10);
+  quizState = {
+    active: true,
+    questions: shuffled,
+    idx: 0,
+    score: 0,
+    submitted: false,
+    selectedChoice: null,
+    userCode: '',
+    hintShown: false
+  };
 
   renderQuizCard();
 }
 
 function renderQuizCard() {
-  const q = quizState;
-  if (q.idx >= q.exercises.length) {
+  const qState = quizState;
+  if (qState.idx >= qState.questions.length) {
     renderQuizResults();
     return;
   }
-  const ex = q.exercises[q.idx];
-  const phase = PHASES.find(p => p.exercises.some(e => e.id === ex.id));
-  const lvMap = { E:'Fácil', M:'Medio', D:'Difícil' };
-  const lvClass = { E:'tag-e', M:'tag-m', D:'tag-d' };
-  const progress = `${q.idx + 1} / ${q.exercises.length}`;
-  const pct = Math.round((q.idx / q.exercises.length) * 100);
-  const solLines = ex.solucion.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const conceptsHtml = ex.conceptos.map(c => `<span class="tag tag-concept">${c}</span>`).join('');
+
+  const q = qState.questions[qState.idx];
+  const progress = `${qState.idx + 1} / ${qState.questions.length}`;
+  const pct = Math.round((qState.idx / qState.questions.length) * 100);
+  const isChoice = q.type === 'choice';
 
   document.getElementById('content').innerHTML = `
-    <div style="max-width:780px;margin:0 auto">
-      <!-- Cabecera quiz -->
+    <div style="max-width:820px;margin:0 auto">
+      <!-- Header Quiz -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;display:flex;align-items:center;gap:16px">
-        <div style="font-size:28px">🎯</div>
+        <div style="font-size:32px">🎯</div>
         <div style="flex:1">
           <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px">Pregunta ${progress}</div>
-          <div style="background:var(--bg3);border-radius:4px;height:6px;margin-top:6px;overflow:hidden">
-            <div style="width:${pct}%;height:100%;background:var(--purple2);transition:width .3s"></div>
+          <div style="background:var(--bg3);border-radius:4px;height:7px;margin-top:6px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--purple2),var(--blue));transition:width .3s"></div>
           </div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:20px;font-weight:700;color:var(--green)">${q.score}</div>
+          <div style="font-size:22px;font-weight:700;color:var(--green)">${qState.score}</div>
           <div style="font-size:10px;color:var(--text2)">puntos</div>
         </div>
         <button onclick="showDashboard()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px">✕ Salir</button>
       </div>
 
-      <!-- Tarjeta de pregunta -->
+      <!-- Tarjeta principal -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:12px">
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-          <span class="tag tag-fase">Fase ${phase.num}</span>
-          <span class="tag ${lvClass[ex.nivel]}">${lvMap[ex.nivel]}</span>
-          ${conceptsHtml}
-        </div>
-        <div style="font-size:18px;font-weight:600;margin-bottom:12px;color:var(--text)">${ex.title}</div>
-        <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;font-size:13px;color:var(--text2)">
-          <strong style="color:var(--blue)">🎯 Objetivo:</strong> ${ex.obj}
-        </div>
-        <div style="font-size:13px;line-height:1.7;margin-bottom:20px">${ex.enun}</div>
-
-        <!-- Botones de acción -->
-        <div id="quiz-actions" style="display:flex;gap:10px;flex-wrap:wrap">
-          <button onclick="quizShowHint()" style="background:var(--bg3);border:1px solid var(--yellow);color:var(--yellow);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">💡 Ver hint (−1pt)</button>
-          <button onclick="quizRevealSol()" style="background:var(--bg3);border:1px solid var(--orange);color:var(--orange);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">👁 Ver solución (0pt)</button>
-          <button onclick="quizMarkKnew()" style="background:rgba(63,185,80,.1);border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;margin-left:auto">✅ ¡Lo sabía! (+3pt)</button>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <span class="tag tag-fase">${q.category}</span>
+          <span class="tag ${isChoice ? 'tag-m' : 'tag-e'}" style="${isChoice ? '' : 'background:var(--purple2);color:#fff'}">
+            ${isChoice ? '❓ Opción Múltiple' : '✍️ Escribir Código'}
+          </span>
         </div>
 
-        <!-- Hint (oculto) -->
-        <div id="quiz-hint-box" style="display:none;margin-top:14px">
-          <div style="background:rgba(210,153,34,.08);border:1px solid var(--yellow);border-radius:var(--radius-sm);padding:12px">
-            <div style="font-size:11px;color:var(--yellow);margin-bottom:6px;text-transform:uppercase">💡 Hint</div>
-            <ul style="padding-left:16px;color:var(--text2);font-size:13px">
-              ${ex.hints.map(h=>`<li style="margin-bottom:4px">${h}</li>`).join('')}
-            </ul>
+        <div style="font-size:17px;font-weight:600;margin-bottom:12px;color:var(--text);line-height:1.5">${q.title}</div>
+
+        ${q.instructions ? `<div style="font-size:12px;color:var(--text2);margin-bottom:16px;background:var(--bg3);padding:8px 12px;border-radius:var(--radius-sm);border-left:3px solid var(--blue)">💡 ${q.instructions}</div>` : ''}
+
+        <!-- CONTENIDO SEGÚN TIPO -->
+        ${isChoice ? renderChoiceContent(q) : renderCodeContent(q)}
+
+        <!-- HINT BOX (si se solicita) -->
+        <div id="quiz-hint-box" style="display:${qState.hintShown ? 'block' : 'none'};margin-top:16px">
+          <div style="background:rgba(210,153,34,.1);border:1px solid var(--yellow);border-radius:var(--radius-sm);padding:12px;color:var(--yellow);font-size:13px">
+            💡 <b>Pista:</b> ${q.hint}
           </div>
         </div>
 
-        <!-- Solución (oculta) -->
-        <div id="quiz-sol-box" style="display:none;margin-top:14px">
-          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px">
-            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Solución de referencia</div>
-            <pre style="font-family:monospace;font-size:12px;white-space:pre-wrap;color:var(--text);overflow-x:auto;max-height:300px;overflow-y:auto">${solLines}</pre>
+        <!-- BOTONES DE ACCIÓN INICIALES -->
+        ${!qState.submitted ? `
+          <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;align-items:center">
+            ${!qState.hintShown ? `
+              <button onclick="quizShowHint()" style="background:var(--bg3);border:1px solid var(--yellow);color:var(--yellow);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600">
+                💡 Ver Pista (-1pt)
+              </button>
+            ` : ''}
+            <button onclick="${isChoice ? 'quizSubmitChoice()' : 'quizSubmitCode()'}" style="background:var(--blue2);border:none;color:#fff;padding:9px 20px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;margin-left:auto">
+              ✓ Verificar Respuesta
+            </button>
           </div>
-          <div style="display:flex;gap:10px;margin-top:12px">
-            <button onclick="quizAnswer(1)" style="flex:1;background:rgba(248,81,73,.1);border:1px solid var(--red);color:var(--red);padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">👎 No lo sabía (+1pt)</button>
-            <button onclick="quizAnswer(2)" style="flex:1;background:rgba(240,136,62,.1);border:1px solid var(--orange);color:var(--orange);padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">🤔 Casi (+2pt)</button>
-            <button onclick="quizAnswer(3)" style="flex:1;background:rgba(63,185,80,.1);border:1px solid var(--green);color:var(--green);padding:10px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px">✅ Lo tenía (+3pt)</button>
+        ` : `
+          <!-- FEEDBACK Y BOTÓN SIGUIENTE -->
+          <div style="margin-top:20px;display:flex;justify-content:flex-end">
+            <button onclick="quizNextQuestion()" style="background:var(--green2);border:1px solid var(--green);color:#fff;padding:10px 24px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:700">
+              Siguiente Pregunta ➔
+            </button>
           </div>
-        </div>
+        `}
       </div>
     </div>
   `;
 }
 
+function renderChoiceContent(q) {
+  const submitted = quizState.submitted;
+  const sel = quizState.selectedChoice;
+
+  return `
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+      ${q.options.map((opt, i) => {
+        let borderCol = 'var(--border)';
+        let bgCol = 'var(--bg3)';
+        let badge = '';
+
+        if (submitted) {
+          if (i === q.correct) {
+            borderCol = 'var(--green)';
+            bgCol = 'rgba(63,185,80,.12)';
+            badge = ' <b style="color:var(--green)">✓ Correcta</b>';
+          } else if (i === sel && sel !== q.correct) {
+            borderCol = 'var(--red)';
+            bgCol = 'rgba(248,81,73,.12)';
+            badge = ' <b style="color:var(--red)">✕ Tu respuesta</b>';
+          }
+        } else if (sel === i) {
+          borderCol = 'var(--blue2)';
+          bgCol = 'var(--bg4)';
+        }
+
+        return `
+          <div onclick="${submitted ? '' : `quizSelectChoice(${i})`}"
+               style="background:${bgCol};border:2px solid ${borderCol};border-radius:var(--radius-sm);padding:12px 16px;cursor:${submitted ? 'default' : 'pointer'};transition:all .15s;display:flex;align-items:center;gap:12px">
+            <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${sel === i ? 'var(--blue)' : 'var(--border2)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;background:${sel === i ? 'var(--blue2)' : 'transparent'};color:${sel === i ? '#fff' : 'var(--text2)'}">
+              ${String.fromCharCode(65 + i)}
+            </div>
+            <div style="flex:1;font-size:13px;color:var(--text);font-family:monospace">${opt.replace(/</g,'&lt;').replace(/>/g,'&gt;')}${badge}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    ${submitted ? `
+      <div style="margin-top:16px;background:var(--bg3);border-left:4px solid ${sel === q.correct ? 'var(--green)' : 'var(--red)'};padding:12px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+        <div style="font-weight:700;color:${sel === q.correct ? 'var(--green)' : 'var(--red)'};margin-bottom:4px">
+          ${sel === q.correct ? '🎉 ¡Respuesta Correcta! (+3 pt)' : '❌ Respuesta Incorrecta (0 pt)'}
+        </div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.5">${q.explanation}</div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function renderCodeContent(q) {
+  const submitted = quizState.submitted;
+  const solLines = q.solution.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  return `
+    <div style="margin-top:14px">
+      ${!submitted ? `
+        <textarea id="quiz-code-input" class="notes-area" style="font-family:monospace;font-size:13px;min-height:90px;"
+                  placeholder="${q.placeholder || 'Escribe tu código aquí...'}"
+                  oninput="quizState.userCode = this.value">${quizState.userCode}</textarea>
+      ` : `
+        <div style="background:#161b22;border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:monospace;font-size:13px;color:#abb2bf;margin-bottom:12px">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase">Tu respuesta ingresada:</div>
+          <div>${quizState.userCode ? quizState.userCode.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '<i>(Sin respuesta)</i>'}</div>
+        </div>
+      `}
+    </div>
+
+    ${submitted ? `
+      <div style="margin-top:16px;background:var(--bg3);border-left:4px solid ${quizState.codeResult.passed ? 'var(--green)' : 'var(--orange)'};padding:14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+        <div style="font-weight:700;color:${quizState.codeResult.passed ? 'var(--green)' : 'var(--orange)'};margin-bottom:6px;font-size:14px">
+          ${quizState.codeResult.passed ? '🎉 ¡Código Verificado Exitosamente! (+3 pt)' : '🤔 Respuesta Parcial o Incompleta (+1 pt)'}
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
+          Palabras clave/sintaxis detectadas: <b>${quizState.codeResult.matchedCount} / ${quizState.codeResult.totalCount}</b>
+        </div>
+
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Solución oficial de referencia:</div>
+        <div class="code-wrap">
+          <button class="btn-copy" style="top:4px;right:4px;" onclick="copyToClipboard(decodeURIComponent('${encodeURIComponent(q.solution)}'), this)">📋 Copiar</button>
+          <pre style="margin:0">${solLines}</pre>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function quizSelectChoice(idx) {
+  quizState.selectedChoice = idx;
+  renderQuizCard();
+}
+
 function quizShowHint() {
   quizState.score = Math.max(0, quizState.score - 1);
-  document.getElementById('quiz-hint-box').style.display = 'block';
+  quizState.hintShown = true;
+  showToast('💡 Pista mostrada (-1 pt)', 'orange');
+  renderQuizCard();
 }
 
-function quizRevealSol() {
-  quizState.shown = true;
-  document.getElementById('quiz-sol-box').style.display = 'block';
-  document.getElementById('quiz-actions').style.display = 'none';
+function quizSubmitChoice() {
+  if (quizState.selectedChoice === null) {
+    showToast('Selecciona una opción antes de verificar', 'red');
+    return;
+  }
+  const q = quizState.questions[quizState.idx];
+  quizState.submitted = true;
+  if (quizState.selectedChoice === q.correct) {
+    quizState.score += 3;
+    showToast('🎉 ¡Correcto! (+3 pt)', 'green');
+  } else {
+    showToast('❌ Incorrecto', 'red');
+  }
+  renderQuizCard();
 }
 
-function quizMarkKnew() {
-  quizState.score += 3;
+function quizSubmitCode() {
+  const txt = quizState.userCode || '';
+  if (!txt.trim()) {
+    showToast('Escribe tu código antes de verificar', 'red');
+    return;
+  }
+  const q = quizState.questions[quizState.idx];
+  const evalRes = validateCodeAnswer(txt, q.keywords);
+  quizState.codeResult = evalRes;
+  quizState.submitted = true;
+
+  if (evalRes.passed) {
+    quizState.score += 3;
+    showToast('🎉 ¡Código correcto! (+3 pt)', 'green');
+  } else {
+    quizState.score += 1;
+    showToast('🤔 Respuesta parcial (+1 pt)', 'orange');
+  }
+  renderQuizCard();
+}
+
+function validateCodeAnswer(userText, keywords) {
+  if (!userText || !userText.trim()) return { passed: false, scoreRatio: 0, matchedCount: 0, totalCount: keywords.length };
+  const cleanUser = userText.toUpperCase().replace(/\s+/g, ' ');
+  let matches = 0;
+  keywords.forEach(kw => {
+    const cleanKw = kw.toUpperCase();
+    if (cleanUser.includes(cleanKw)) {
+      matches++;
+    }
+  });
+  const ratio = matches / keywords.length;
+  return {
+    passed: ratio >= 0.70,
+    scoreRatio: ratio,
+    matchedCount: matches,
+    totalCount: keywords.length
+  };
+}
+
+function quizNextQuestion() {
   quizState.idx++;
-  showToast('⭐ +3 puntos — ¡excelente!', 'green');
-  setTimeout(renderQuizCard, 300);
-}
-
-function quizAnswer(pts) {
-  quizState.score += pts;
-  quizState.idx++;
-  const msgs = { 1:'Sigue practicando 💪', 2:'¡Vas bien! 🤔', 3:'¡Correcto! ⭐' };
-  const types = { 1:'red', 2:'orange', 3:'green' };
-  showToast(`${msgs[pts]} +${pts}pt`, types[pts]);
-  setTimeout(renderQuizCard, 300);
+  quizState.submitted = false;
+  quizState.selectedChoice = null;
+  quizState.userCode = '';
+  quizState.hintShown = false;
+  renderQuizCard();
 }
 
 function renderQuizResults() {
-  const q = quizState;
-  const max = q.exercises.length * 3;
-  const pct = Math.round((q.score / max) * 100);
-  const grade = pct >= 90 ? '🏆 Experto' : pct >= 70 ? '⭐ Muy bien' : pct >= 50 ? '👍 Bien' : '💪 Sigue practicando';
+  const qState = quizState;
+  const max = qState.questions.length * 3;
+  const pct = Math.round((qState.score / max) * 100);
+  const grade = pct >= 90 ? '🏆 Experto IBM i' : pct >= 70 ? '⭐ Muy Buen Nivel' : pct >= 50 ? '👍 Buen Avance' : '💪 Sigue Practicando';
   const col = pct >= 90 ? 'var(--teal)' : pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--orange)';
 
   document.getElementById('content').innerHTML = `
-    <div style="max-width:600px;margin:40px auto;text-align:center">
-      <div style="font-size:64px;margin-bottom:16px">🎯</div>
-      <h2 style="font-size:28px;margin-bottom:8px">${grade}</h2>
-      <div style="font-size:64px;font-weight:700;color:${col};margin:16px 0">${q.score}<span style="font-size:24px;color:var(--text2)"> / ${max}</span></div>
-      <div style="font-size:16px;color:var(--text2);margin-bottom:32px">${pct}% de aciertos en ${q.exercises.length} preguntas</div>
+    <div style="max-width:640px;margin:30px auto;text-align:center">
+      <div style="font-size:64px;margin-bottom:12px">🎯</div>
+      <h2 style="font-size:26px;margin-bottom:6px">${grade}</h2>
+      <div style="font-size:56px;font-weight:700;color:${col};margin:12px 0">${qState.score}<span style="font-size:22px;color:var(--text2)"> / ${max}</span></div>
+      <div style="font-size:15px;color:var(--text2);margin-bottom:28px">${pct}% de rendimiento global en ${qState.questions.length} preguntas</div>
+
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-          <div><div style="font-size:24px;font-weight:700;color:var(--blue)">${q.exercises.length}</div><div style="font-size:12px;color:var(--text2)">Preguntas</div></div>
-          <div><div style="font-size:24px;font-weight:700;color:${col}">${q.score}</div><div style="font-size:12px;color:var(--text2)">Puntos</div></div>
-          <div><div style="font-size:24px;font-weight:700;color:var(--purple)">${pct}%</div><div style="font-size:12px;color:var(--text2)">Porcentaje</div></div>
+          <div><div style="font-size:22px;font-weight:700;color:var(--blue)">${qState.questions.length}</div><div style="font-size:12px;color:var(--text2)">Preguntas</div></div>
+          <div><div style="font-size:22px;font-weight:700;color:${col}">${qState.score}</div><div style="font-size:12px;color:var(--text2)">Puntos Obt.</div></div>
+          <div><div style="font-size:22px;font-weight:700;color:var(--purple)">${pct}%</div><div style="font-size:12px;color:var(--text2)">Acierto</div></div>
         </div>
       </div>
+
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <button onclick="showQuiz()" style="background:var(--purple2);border:none;color:white;padding:12px 24px;border-radius:var(--radius);cursor:pointer;font-size:14px;font-weight:600">🔄 Nuevo Quiz</button>
+        <button onclick="showQuiz()" style="background:var(--purple2);border:none;color:white;padding:12px 24px;border-radius:var(--radius);cursor:pointer;font-size:14px;font-weight:600">🔄 Nuevo Quiz Aleatorio</button>
         <button onclick="showDashboard()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:12px 24px;border-radius:var(--radius);cursor:pointer;font-size:14px">🏠 Dashboard</button>
       </div>
     </div>
   `;
 }
 
+
 /* ════════════════════════════════════════════════════════════════
-   TOAST
+   TOAST & COPY HELPERS
 ═══════════════════════════════════════════════════════════════ */
 let toastTimer;
 function showToast(msg, type) {
@@ -3412,6 +3835,45 @@ function showToast(msg, type) {
   t.className = 'toast show ' + (type || '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.className = 'toast'; }, 2500);
+}
+
+function copyToClipboard(text, btn) {
+  const handleSuccess = () => {
+    if (btn) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+    showToast('📋 Copiado al portapapeles', 'green');
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(handleSuccess).catch(() => {
+      fallbackCopy(text, handleSuccess);
+    });
+  } else {
+    fallbackCopy(text, handleSuccess);
+  }
+}
+
+function fallbackCopy(text, callback) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    callback();
+  } catch(e) {
+    showToast('❌ Error al copiar', 'red');
+  }
+  document.body.removeChild(ta);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -4404,62 +4866,414 @@ const CMDS_QSH = [
 // Agregar comandos QSH al array principal
 CMDS.push(...CMDS_QSH);
 
+
 /* ════════════════════════════════════════════════════════════════
-   ACORDEÓN — ESTADO Y RENDER
+   ACORDEONES DE LENGUAJES RPG
 ═══════════════════════════════════════════════════════════════ */
-let acSearch = '';
-let acFilter = '*';
+
+/* ─── 1. RPG III / OPM RPG (FORMATO FIJO) ────────────────────── */
+const CATS_RPG = {
+  spec: { label:'Especificaciones', color:'#58a6ff', bg:'#0d2040' },
+  calc: { label:'Cálculos / Mat',  color:'#bc8cff', bg:'#271052' },
+  move: { label:'Movimiento',      color:'#f0883e', bg:'#3d1a00' },
+  flow: { label:'Control Flujo',   color:'#3fb950', bg:'#0f2a18' },
+  db:   { label:'Archivos DB',    color:'#388bfd', bg:'#0a1f3d' },
+  subr: { label:'Subrutinas',      color:'#d29922', bg:'#3d2900' },
+  ind:  { label:'Indicadores',    color:'#f85149', bg:'#3d0d0d' }
+};
+
+const DATA_RPG = [
+  { cmd:'H-Spec (Header)', cat:'spec', desc:'Especificación de control de cabecera. Define opciones del programa RPG III.',
+    uso:'Columna 6 = H. Define formato de fecha, moneda y compilación global.',
+    ej:'H            Y/                                                      ' },
+  { cmd:'F-Spec (File)', cat:'spec', desc:'Especificación de archivos. Declara archivos de disco, pantalla e impresora.',
+    uso:'Columna 6 = F. Define el nombre del archivo, tipo (I/O/U/C), designado (P/S), formato (F) y tipo de dispositivo (DISK/WORKSTN/PRINTER).',
+    ej:'FCLIENTES IF  E           K        DISK\nFC CLIPANT  CF  E                    WORKSTN\nFCLIRPT   O   F 132        PRINTER' },
+  { cmd:'E-Spec (Extension)', cat:'spec', desc:'Especificación de extensión. Declara arreglos (Arrays) y tablas.',
+    uso:'Columna 6 = E. Define arreglos en memoria, tamaño de elementos y origen de carga.',
+    ej:'E                    TABNOM  1  10 30                                ' },
+  { cmd:'I-Spec (Input)', cat:'spec', desc:'Especificación de entrada. Renombra o reestructura campos y campos de datos (Data Structures).',
+    uso:'Columna 6 = I. Redefine registros no descritos externamente o crea Data Structures en RPG III.',
+    ej:'I            DS\nI                                       1   70CODIGO\nI                                       8  470NOMBRE' },
+  { cmd:'C-Spec (Calculation)', cat:'spec', desc:'Especificación de cálculos. Contiene la lógica ejecutable en formato fijo de 80 columnas.',
+    uso:'Columna 6 = C. Factor 1 (cols 12-25), Operation (cols 28-32), Factor 2 (cols 33-45), Result (cols 47-52), Indicators (cols 54-59).',
+    ej:'C     LIBCOD        CHAIN LIBREC              90\nC  N90              ADD   1            LIBDIS' },
+  { cmd:'O-Spec (Output)', cat:'spec', desc:'Especificación de salida. Define formatos de salida impresos o de archivo sin DDS externo.',
+    uso:'Columna 6 = O. Escribe líneas de detalle o cabecera directamente a impresora o disco.',
+    ej:'OCLIRPT  H  100 1 P\nO                                   10 \'LISTADO\'\nO        D  1\nO                         LIBTTL    60' },
+  { cmd:'ADD', cat:'calc', desc:'Suma Factor 1 y Factor 2 asignando el resultado al campo Result.',
+    uso:'Suma aritmética básica en RPG III.',
+    ej:'C     VAL1          ADD   VAL2          TOTAL' },
+  { cmd:'SUB', cat:'calc', desc:'Resta Factor 2 de Factor 1 asignando el resultado a Result.',
+    uso:'Resta aritmética básica.',
+    ej:'C     STKACT        SUB   CANT          STKNUE' },
+  { cmd:'MULT', cat:'calc', desc:'Multiplica Factor 1 por Factor 2 asignando el resultado a Result.',
+    uso:'Cálculo de importes, impuestos o totales.',
+    ej:'C     CANT          MULT  PRECIO        IMPORTE' },
+  { cmd:'DIV', cat:'calc', desc:'Divide Factor 1 entre Factor 2 asignando el resultado a Result.',
+    uso:'División numérica. Puede acompañarse de indicador de redondeo (H en col 53).',
+    ej:'C     TOTAL         DIV   CANT          PROMED   H' },
+  { cmd:'Z-ADD', cat:'calc', desc:'Zero and Add: Asigna el valor de Factor 2 al campo Result (limpia primero el Result a cero).',
+    uso:'Asignación numérica directa en RPG III.',
+    ej:'C                   Z-ADD 0             CONT' },
+  { cmd:'Z-SUB', cat:'calc', desc:'Zero and Subtract: Asigna el valor negativo de Factor 2 al Result.',
+    uso:'Asignación de valor negativo.',
+    ej:'C                   Z-SUB IMPORTE       SALDO' },
+  { cmd:'MOVE', cat:'move', desc:'Mueve caracteres o números alineando por la DERECHA.',
+    uso:'Asignación o conversión de datos alineados a la derecha.',
+    ej:'C                   MOVE  \'123\'        CODIGO' },
+  { cmd:'MOVEL', cat:'move', desc:'Move Left: Mueve caracteres o números alineando por la IZQUIERDA.',
+    uso:'Asignación de cadenas alineadas a la izquierda.',
+    ej:'C                   MOVEL NOMORIG       NOMDEST' },
+  { cmd:'CHAIN', cat:'db', desc:'Lee un registro en un archivo indexado por clave de acceso directo.',
+    uso:'Acceso aleatorio a registros por clave. Enciende indicador de error si no lo encuentra.',
+    ej:'C     SOCCOD        CHAIN SOCREC              99\nC  N99              EXSR  PROCES' },
+  { cmd:'READ', cat:'db', desc:'Lee el siguiente registro secuencial del archivo.',
+    uso:'Lectura secuencial. Enciende indicador en col 75-76 al llegar al final del archivo (%EOF).',
+    ej:'C                   READ  LIBREC                90\nC  N90              ADD   1            TOTAL' },
+  { cmd:'READE', cat:'db', desc:'Read Equal: Lee el siguiente registro que coincida con la clave indicada en Factor 1.',
+    uso:'Recorrer registros iguales secuencialmente (ej: todos los préstamos de un socio).',
+    ej:'C     PRESSOC       READE PRESREC               90' },
+  { cmd:'SETLL', cat:'db', desc:'Set Lower Limit: Posiciona el puntero antes del primer registro mayor o igual a la clave.',
+    uso:'Preparar lectura secuencial desde un punto específico.',
+    ej:'C     SOCCOD        SETLL SOCREC' },
+  { cmd:'SETGT', cat:'db', desc:'Set Greater Than: Posiciona el puntero después del último registro igual a la clave.',
+    uso:'Posicionar para lectura descendente o comprobar existencia.',
+    ej:'C     SOCCOD        SETGT SOCREC' },
+  { cmd:'UPDAT', cat:'db', desc:'Actualiza el registro leído previamente con CHAIN o READ.',
+    uso:'Modificación de registros en un archivo abierto como U (Update).',
+    ej:'C                   UPDAT LIBREC' },
+  { cmd:'WRTNG / WRITE', cat:'db', desc:'Escribe un nuevo registro en el archivo.',
+    uso:'Inserción de nuevos registros en un archivo abierto en modo de salida (O) o adición (A).',
+    ej:'C                   WRITE PRESREC' },
+  { cmd:'DELET', cat:'db', desc:'Elimina el registro leído o especificado por clave.',
+    uso:'Eliminación física de registros en la base de datos.',
+    ej:'C     SOCCOD        DELET SOCREC' },
+  { cmd:'IFEQ / ENDIF', cat:'flow', desc:'Estructura condicional en RPG III (If Equal).',
+    uso:'Evaluación lógica fija. Variantes: IFNE, IFGT, IFLT, IFGE, IFLE.',
+    ej:'C     ESTADO        IFEQ  \'A\'\nC                   EXSR  ACTIVO\nC                   ELSE\nC                   EXSR  INACTV\nC                   ENDIF' },
+  { cmd:'DO / END', cat:'flow', desc:'Ciclo repetitivo en RPG III.',
+    uso:'Bucle condicional o por contador.',
+    ej:'C     1             DO    10            I\nC     I             ADD   TOTAL         ACUM\nC                   END' },
+  { cmd:'BEGSR / ENDSR', cat:'subr', desc:'Define el inicio y fin de una subrutina.',
+    uso:'Modular código en subrutinas internas ejecutadas con EXSR.',
+    ej:'C     CALCUL        BEGSR\nC     VAL1          ADD   VAL2          TOTAL\nC                   ENDSR' },
+  { cmd:'EXSR', cat:'subr', desc:'Execute Subroutine: Llama a una subrutina declarada con BEGSR.',
+    uso:'Invocar bloques de código interno.',
+    ej:'C                   EXSR  CALCUL' },
+  { cmd:'PLIST / PARM', cat:'subr', desc:'Define una lista de parámetros de entrada/salida para el programa.',
+    uso:'Recibir o pasar parámetros en llamadas entre programas OPM.',
+    ej:'C     *ENTRY        PLIST\nC                   PARM                pCod    7\nC                   PARM                pNom   40' },
+  { cmd:'SETON / SETOF', cat:'ind', desc:'Enciende (*ON) o apaga (*OFF) indicadores del 01 al 99 o indicadores de respuesta.',
+    uso:'Control manual de estados en RPG III.',
+    ej:'C                   SETON                     LR\nC                   SETOF                     30' }
+];
+
+/* ─── 2. RPGLE / ILE RPG (FORMATO FIJO Y MIXTO) ──────────────── */
+const CATS_RPGLE = {
+  spec: { label:'Espec ILE',      color:'#58a6ff', bg:'#0d2040' },
+  dcl:  { label:'Declaraciones',  color:'#bc8cff', bg:'#271052' },
+  kw:   { label:'Palabras Clave', color:'#f0883e', bg:'#3d1a00' },
+  op:   { label:'Operaciones',    color:'#3fb950', bg:'#0f2a18' },
+  bif:  { label:'Funciones %BIF', color:'#d29922', bg:'#3d2900' }
+};
+
+const DATA_RPGLE = [
+  { cmd:'H-Spec (Control Option)', cat:'spec', desc:'Especificación de opciones de control ILE. Define optimización, activation group e indicadores.',
+    uso:'Columna 6 = H. H-Spec ILE moderna con palabras clave.',
+    ej:'H OPTION(*NODEBUGIO:*SRCSTMT) DFTACTGRP(*NO) ACTGRP(*CALLER)' },
+  { cmd:'F-Spec ILE (Files)', cat:'spec', desc:'Declaración de archivos en RPG IV en formato fijo de 80 columnas.',
+    uso:'Columna 6 = F. Soporta nombres de hasta 10 caracteres y palabras clave como KEYED, USAGE, RENAME.',
+    ej:'FLIBROS    UF   E           K DISK    RENAME(LIBREC:RLIB)\nFSOCIOS    IF   E           K DISK' },
+  { cmd:'D-Spec (Definition)', cat:'spec', desc:'Especificación de definiciones. Reemplaza las viejas I-Spec y E-Spec.',
+    uso:'Columna 6 = D. Define variables standalone (S), Data Structures (DS), constantes (C), prototipos (PR) e interfaces (PI).',
+    ej:'D vNombre         S             40A\nD vFecha          S               D   DATFMT(*ISO)\nD dsSocio         DS                  QUALIFIED\nD   cod                          7A\nD   nom                         40A' },
+  { cmd:'C-Spec RPG IV', cat:'spec', desc:'Especificación de cálculo extendida. Permite la operación EVAL y expresiones libres parciales.',
+    uso:'Columna 6 = C. Permite evaluación matemática con parentesis, llamadas CALLP y BIFs.',
+    ej:'C                   EVAL      vTotal = vPrecio * vCant\nC                   EVAL      vNomFmt = %TRIM(vNom) + \', \' + vApe' },
+  { cmd:'P-Spec (Procedure)', cat:'spec', desc:'Especificación de procedimientos en ILE RPG.',
+    uso:'Columna 6 = P. Delimita el inicio (B) y fin (E) de subprocedimientos exportables o internos.',
+    ej:'P MiProc          B                   EXPORT\nD MiProc          PI            10I 0\nD   pVal                        10I 0 CONST\nC                   RETURN    pVal * 2\nP MiProc          E' },
+  { cmd:'QUALIFIED', cat:'kw', desc:'Palabra clave D-Spec que requiere acceder a los campos de la DS mediante subcampos (DS.campo).',
+    uso:'Evita colisión de nombres entre campos de tablas y campos de la DS.',
+    ej:'D dsCliente       DS                  QUALIFIED\nD   codigo                       7A\nD   nombre                      40A' },
+  { cmd:'LIKEDS', cat:'kw', desc:'Define una DS heredando la estructura exacta de otra DS definida como TEMPLATE.',
+    uso:'Creación de instancias de objetos o estructuras DTO reutilizables.',
+    ej:'D dsCliTemp       DS                  QUALIFIED TEMPLATE\nD   cod                          7A\nD dsActual        DS                  LIKEDS(dsCliTemp)' },
+  { cmd:'LIKE', cat:'kw', desc:'Define una variable heredando el tipo y la longitud exacta de otra variable o campo.',
+    uso:'Mantenibilidad: si cambia el campo original, la variable adaptada se actualiza automáticamente.',
+    ej:'D vCodCopia       S                   LIKE(LIBCOD)' },
+  { cmd:'OVERLAY', cat:'kw', desc:'Superpone un campo sobre otro o dentro de una posición específica de una DS o variable.',
+    uso:'Reestructurar buffers de datos o descomponer cadenas sin usar SUBST.',
+    ej:'D dsFecha         DS\nD   fecStr                       8A\nD   fecAnio                      4A   OVERLAY(fecStr:1)\nD   fecMes                       2A   OVERLAY(fecStr:5)\nD   fecDia                       2A   OVERLAY(fecStr:7)' },
+  { cmd:'EXTPGM / EXTPROC', cat:'kw', desc:'Define el nombre externo del programa o procedimiento al que llama un prototipo PR.',
+    uso:'Conectar prototipos RPGLE con llamadas a programas CL/RPGLE externos o funciones C.',
+    ej:'D CallCmd         PR                  EXTPGM(\'QCMDEXC\')\nD   pCmd                      1000A   CONST\nD   pLen                        15P 5 CONST' },
+  { cmd:'EVAL', cat:'op', desc:'Operación de evaluación matemática y de expresiones complejas en C-Spec.',
+    uso:'Asignación de variables con soporte de operadores matemáticos (+, -, *, /) y BIFs.',
+    ej:'C                   EVAL      vSubtotal = vCant * vPrecio\nC                   EVAL      *IN30 = (vSaldo > 1000)' },
+  { cmd:'CALLP', cat:'op', desc:'Call Prototyped: Llama a un procedimiento o programa pasando parámetros validados por prototipo PR.',
+    uso:'Llamadas seguras en ILE con comprobación de tipos en tiempo de compilación.',
+    ej:'C                   CALLP     CallCmd(\'DSPLIBL\': 7)' },
+  { cmd:'CLEAR / RESET', cat:'op', desc:'Limpia una variable o DS a sus valores nulos/blancos, o la reinicia a su valor de inicialización (INZ).',
+    uso:'Limpieza de buffers antes de INSERT o lectura.',
+    ej:'C                   CLEAR     dsSocio\nC                   RESET     vContador' },
+  { cmd:'ALLOC / DEALLOC', cat:'op', desc:'Asignación y liberación de memoria dinámica (Heap memory) mediante punteros.',
+    uso:'Manejo de memoria en procedimientos ILE avanzados.',
+    ej:'C                   ALLOC     1024          pBuffer\nC                   DEALLOC                 pBuffer' },
+  { cmd:'%TRIM', cat:'bif', desc:'Elimina espacios en blanco iniciales y finales de una cadena.',
+    uso:'Limpieza de espacios sobrantes en campos de texto.',
+    ej:'C                   EVAL      vFull = %TRIM(vNom) + \' \' + %TRIM(vApe)' },
+  { cmd:'%SUBST', cat:'bif', desc:'Extrae una subcadena especificando posición inicial y longitud.',
+    uso:'Manipulación precisa de texto.',
+    ej:'C                   EVAL      vAnio = %SUBST(vFechaIso:1:4)' },
+  { cmd:'%FOUND', cat:'bif', desc:'Retorna *ON si la última operación de archivo (CHAIN, SETLL, CHECK) tuvo éxito.',
+    uso:'Verificación pos-búsqueda en base de datos.',
+    ej:'C     LIBCOD        CHAIN     LIBREC\nC                   IF        %FOUND(LIBROS)\nC                   EVAL      vTtl = LIBTTL\nC                   ENDIF' },
+  { cmd:'%EOF', cat:'bif', desc:'Retorna *ON si la última lectura (READ, READE) alcanzó el final del archivo.',
+    uso:'Control de bucles de lectura secuencial.',
+    ej:'C                   READ      LIBREC\nC                   DOW       NOT %EOF(LIBROS)\nC                   EVAL      vCount = vCount + 1\nC                   READ      LIBREC\nC                   ENDDO' }
+];
+
+/* ─── 3. RPGLE FREE (**FREE) ─────────────────────────────────── */
+const CATS_RPGLEFREE = {
+  ctl:  { label:'Control / Dir',  color:'#bc8cff', bg:'#271052' },
+  dcl:  { label:'Declaraciones',  color:'#58a6ff', bg:'#0d2040' },
+  flow: { label:'Control Flujo',   color:'#3fb950', bg:'#0f2a18' },
+  file: { label:'Base de Datos',   color:'#388bfd', bg:'#0a1f3d' },
+  bif:  { label:'BIFs (%BIF)',    color:'#f0883e', bg:'#3d1a00' }
+};
+
+const DATA_RPGLEFREE = [
+  { cmd:'**FREE Directiva', cat:'ctl', desc:'Directiva de cabecera en columna 1. Inicia el modo RPGLE totalmente libre sin restricciones de columna.',
+    uso:'Indispensable al inicio de cualquier miembro de código RPGLE moderno moderno (V7R1+).',
+    ej:'**FREE\nCTL-OPT OPTION(*NODEBUGIO:*SRCSTMT) DFTACTGRP(*NO) ACTGRP(*CALLER);' },
+  { cmd:'CTL-OPT', cat:'ctl', desc:'Directiva de opciones de control globales. Reemplaza la antigua H-Spec.',
+    uso:'Define el activation group, vinculación BNDDIR, comportamiento de debug y modelo de compilación.',
+    ej:'CTL-OPT OPTION(*NODEBUGIO:*SRCSTMT)\n        DFTACTGRP(*NO)\n        ACTGRP(\'BIBLIOTECA\')\n        BNDDIR(\'BIBLIOTECA/UTILSRV\');' },
+  { cmd:'/COPY / /INCLUDE', cat:'ctl', desc:'Inserta el contenido de un copy book (archivo fuente de prototipos o definiciones) durante la compilación.',
+    uso:'Reutilización de definiciones e interfaces de Service Programs.',
+    ej:'/COPY BIBLIOTECA/QCPYSRC,LIBREPO_H' },
+  { cmd:'DCL-F', cat:'dcl', desc:'Declara un archivo de base de datos, pantalla o impresora en RPGLE **FREE.',
+    uso:'Define el uso (*INPUT, *OUTPUT, *UPDATE), organización KEYED, o subfile SFILE.',
+    ej:'DCL-F LIBROS USAGE(*INPUT *UPDATE) KEYED;\nDCL-F LIBD01 WORKSTN SFILE(SFLIB:nRrn);' },
+  { cmd:'DCL-S', cat:'dcl', desc:'Declara una variable standalone.',
+    uso:'Tipos disponibles: CHAR, VARCHAR, PACKED, ZONED, INT, UNS, IND, DATE, TIME, TIMESTAMP, POINTER.',
+    ej:'DCL-S vNombre  VARCHAR(60);\nDCL-S vMonto   PACKED(9:2) INZ(0);\nDCL-S vActivo  IND         INZ(*OFF);\nDCL-S vFecha   DATE        INZ(*SYS);' },
+  { cmd:'DCL-DS / END-DS', cat:'dcl', desc:'Declara una Data Structure estructurada.',
+    uso:'Agrupa múltiples variables o mapea registros de archivos.',
+    ej:'DCL-DS dsLibro QUALIFIED TEMPLATE;\n  cod   CHAR(7);\n  ttl   VARCHAR(60);\n  anio  PACKED(4:0);\n  dis   INT(5);\nEND-DS;' },
+  { cmd:'DCL-PROC / END-PROC', cat:'dcl', desc:'Declara un subprocedimiento ILE independiente con ámbito local de variables.',
+    uso:'Base de la programación modular Clean Code en RPGLE moderno.',
+    ej:'DCL-PROC ValidarSocio EXPORT;\n  DCL-PI *N IND;\n    pCod CHAR(7) CONST;\n  END-PI;\n  CHAIN pCod SOCREC;\n  RETURN %FOUND(SOCIOS);\nEND-PROC;' },
+  { cmd:'DCL-PI / END-PI', cat:'dcl', desc:'Procedure Interface: Declara los parámetros de entrada/salida y el valor de retorno de un procedimiento o programa.',
+    uso:'Reemplaza la antigua PLIST/PARM. Permite validación de tipos estricta.',
+    ej:'DCL-PI *N;\n  pCodLib CHAR(7)   CONST;\n  pResultado CHAR(100);\nEND-PI;' },
+  { cmd:'DCL-PR / END-PR', cat:'dcl', desc:'Procedure Prototype: Declara la firma externa de un procedimiento o programa a ser llamado.',
+    uso:'Se coloca habitualmente en un Copy Book para ser compartido entre programas.',
+    ej:'DCL-PR FormatearFecha VARCHAR(10) EXTPROC(\'FormatearFecha\');\n  pFecha DATE CONST;\nEND-PR;' },
+  { cmd:'IF ... ELSEIF ... ELSE ... ENDIF', cat:'flow', desc:'Estructura condicional libre.',
+    uso:'Evaluación de condiciones compuestas con AND, OR, NOT y paréntesis.',
+    ej:'IF vEdad >= 18 AND vActivo = *ON;\n  vMsg = \'Permitido\';\nELSEIF vEdad >= 16;\n  vMsg = \'Requiere tutor\';\nELSE;\n  vMsg = \'Denegado\';\nENDIF;' },
+  { cmd:'SELECT ... WHEN ... OTHER ... ENDSL', cat:'flow', desc:'Estructura de selección múltiple (Switch/Case).',
+    uso:'Sustituye múltiples cadenas de IF anidados de forma clara.',
+    ej:'SELECT;\n  WHEN vTipo = \'A\'; vPrecio *= 0.90;\n  WHEN vTipo = \'B\'; vPrecio *= 0.95;\n  OTHER;            vPrecio *= 1.00;\nENDSL;' },
+  { cmd:'DOW ... ENDDO', cat:'flow', desc:'Bucle mientras (Do While): Evalúa la condición ANTES de cada iteración.',
+    uso:'Patrón estándar para lectura de archivos hasta %EOF.',
+    ej:'DOW NOT %EOF(LIBROS);\n  vTotal += LIBDIS;\n  READ LIBREC;\nENDDO;' },
+  { cmd:'FOR ... ENDFOR', cat:'flow', desc:'Bucle contador incremental o decremental.',
+    uso:'Recorrer arreglos, matrices o subfiles con un límite fijo.',
+    ej:'FOR nIdx = 1 TO 10 BY 1;\n  vArr(nIdx) = 0;\nENDFOR;' },
+  { cmd:'MONITOR ... ON-ERROR ... ENDMON', cat:'flow', desc:'Estructura de captura y manejo de excepciones de tiempo de ejecución.',
+    uso:'Evita caídas abruptas del programa ante errores de división por cero, conversión o E/S.',
+    ej:'MONITOR;\n  vPromedio = vTotal / vCant;\nON-ERROR 00102; // División por cero\n  vPromedio = 0;\nON-ERROR;\n  vPromedio = -1; // Otros errores\nENDMON;' },
+  { cmd:'CHAIN', cat:'file', desc:'Busca una fila en un archivo indexado por la clave especificada.',
+    uso:'Retorna %FOUND(archivo) como verdadero si se localiza el registro.',
+    ej:'CHAIN pCodLib LIBREC;\nIF %FOUND(LIBROS);\n  vDisponibles = LIBDIS;\nENDIF;' },
+  { cmd:'SETLL / SETGT', cat:'file', desc:'Posiciona la lista de acceso al inicio o fin de un conjunto de claves en la tabla.',
+    uso:'Preparación previa a lecturas con READE o verificación de existencia con %EQUAL.',
+    ej:'SETLL pCodSoc PRESREC;\nREADE pCodSoc PRESREC;\nDOW NOT %EOF(PRESTAMOS);\n  vNumPrest += 1;\n  READE pCodSoc PRESREC;\nENDDO;' },
+  { cmd:'WRITE / UPDATE / DELETE', cat:'file', desc:'Operaciones DML nativas de base de datos.',
+    uso:'Inserta (WRITE), modifica (UPDATE) o elimina (DELETE) el registro activo.',
+    ej:'WRITE LIBREC;\n// O tras un CHAIN:\nLIBDIS -= 1;\nUPDATE LIBREC;' },
+  { cmd:'%TRIM / %TRIML / %TRIMR', cat:'bif', desc:'BIF para eliminar espacios sobrantes de cadenas.',
+    uso:'%TRIM (ambos lados), %TRIML (izquierda), %TRIMR (derecha).',
+    ej:'vTextoLimpio = %TRIM(vCampoAlfa);' },
+  { cmd:'%SUBST', cat:'bif', desc:'Extrae o modifica una porción de una cadena.',
+    uso:'Puede usarse a la izquierda o derecha de una asignación.',
+    ej:'vPrefijo = %SUBST(vCodigo:1:3);\n%SUBST(vCodigo:1:3) = \'ABC\';' },
+  { cmd:'%CHAR / %DEC / %INT / %DATE', cat:'bif', desc:'BIFs de conversión explícita de tipos de datos.',
+    uso:'Convertir números a texto, texto a fechas o fechas a cadenas formateadas.',
+    ej:'vMsg = \'Stock: \' + %CHAR(nStock);\nvAnio = %DEC(%CHAR(dFecha:*Y):4:0);\nvFecha = %DATE(sFechaIso:*ISO);' },
+  { cmd:'%ADDDUR / %SUBDUR', cat:'bif', desc:'Suma o resta una duración (días, meses, años) a una variable de tipo DATE/TIMESTAMP.',
+    uso:'Cálculo automático de fechas de vencimiento.',
+    ej:'vVencimiento = %ADDDUR(dFechaHoy : 15 : *DAYS);' },
+  { cmd:'%DIFF', cat:'bif', desc:'Calcula la diferencia entre dos fechas o timestamps en las unidades indicadas (*DAYS, *MONTHS, *YEARS).',
+    uso:'Cálculo de días de mora o antigüedad.',
+    ej:'nDiasAtraso = %DIFF(dFechaHoy : dFechaVenc : *DAYS);' }
+];
+
+/* ─── 4. SQLRPGLE / DB2 FOR I ────────────────────────────────── */
+const CATS_SQLRPGLE = {
+  dml:   { label:'DML SQL',        color:'#39d353', bg:'#0f2a18' },
+  cur:   { label:'Cursores',       color:'#388bfd', bg:'#0a1f3d' },
+  trans: { label:'Transacciones', color:'#f85149', bg:'#3d0d0d' },
+  sp:    { label:'Stored Procs',   color:'#bc8cff', bg:'#271052' },
+  json:  { label:'JSON / DB2',     color:'#f0883e', bg:'#3d1a00' },
+  ibmi:  { label:'IBM i Services', color:'#58a6ff', bg:'#0d2040' }
+};
+
+const DATA_SQLRPGLE = [
+  { cmd:'EXEC SQL Directiva', cat:'dml', desc:'Bloque de sentencia SQL embebido en programa SQLRPGLE.',
+    uso:'Delimita cualquier instrucción SQL ejecutable dentro del flujo RPGLE.',
+    ej:'EXEC SQL\n  SELECT LIBTTL INTO :vTitulo\n  FROM BIBLIOTECA/LIBROS\n  WHERE LIBCOD = :pCod;\n\nIF SQLSTATE = \'00000\';\n  DSPLY vTitulo;\nENDIF;' },
+  { cmd:'SET OPTION COMMIT', cat:'trans', desc:'Configura las opciones globales del precompilador SQLRPGLE.',
+    uso:'Debe ser la PRIMERA sentencia EXEC SQL en el programa. Define nivel de aislamiento (*NONE, *CHG, *CS, *ALL) y nombrado (*SQL o *SYS).',
+    ej:'EXEC SQL SET OPTION\n  COMMIT = *CHG,\n  NAMING = *SQL,\n  CLOSQLCSR = *ENDACTGRP;' },
+  { cmd:'SELECT ... INTO', cat:'dml', desc:'Ejecuta una consulta SQL que retorna una única fila y asigna los campos a variables RPGLE (host variables con :)',
+    uso:'Consulta rápida de un registro en DB2.',
+    ej:'EXEC SQL\n  SELECT SOCNOM, SOCEML\n  INTO  :vNombre, :vEmail\n  FROM  BIBLIOTECA/SOCIOS\n  WHERE SOCCOD = :pCod;\n\nIF SQLSTATE = \'02000\';\n  // No encontrado\nENDIF;' },
+  { cmd:'DECLARE CURSOR', cat:'cur', desc:'Declara un cursor SQL para recorrer múltiples filas resultado de un SELECT.',
+    uso:'Lectura paginada o procesamiento fila por fila de consultas complejas con JOIN y agrupar.',
+    ej:'EXEC SQL\n  DECLARE cPrst CURSOR FOR\n    SELECT PRESCOD, PRESLIB, PRESSOC\n    FROM   BIBLIOTECA/PRESTAMOS\n    WHERE  PRESEST = \'A\'\n    ORDER BY PRESFEC;' },
+  { cmd:'OPEN / FETCH / CLOSE', cat:'cur', desc:'Operaciones de ciclo de vida de un cursor SQL en SQLRPGLE.',
+    uso:'OPEN abre la consulta, FETCH avanza la fila, CLOSE libera la memoria.',
+    ej:'EXEC SQL OPEN cPrst;\n\nEXEC SQL FETCH NEXT FROM cPrst INTO :vCod, :vLib, :vSoc;\nDOW SQLSTATE = \'00000\';\n  // Procesar fila\n  EXEC SQL FETCH NEXT FROM cPrst INTO :vCod, :vLib, :vSoc;\nENDDO;\n\nEXEC SQL CLOSE cPrst;' },
+  { cmd:'SQLSTATE / SQLCODE', cat:'trans', desc:'Variables especiales retornadas automáticamente por DB2 tras cada EXEC SQL.',
+    uso:'SQLSTATE = \'00000\' (Éxito), \'02000\' (No filas / NOT FOUND). SQLCODE = 0 (OK), 100 (No filas), <0 (Error).',
+    ej:'IF SQLSTATE <> \'00000\' AND SQLSTATE <> \'02000\';\n  // Manejar error SQL\n  vErr = \'Error SQLSTATE: \' + SQLSTATE;\nENDIF;' },
+  { cmd:'COMMIT / ROLLBACK', cat:'trans', desc:'Confirma (COMMIT) o revoca (ROLLBACK) los cambios hechos en la transacción activa.',
+    uso:'Asegura la atomicidad e integridad en operaciones multitabla.',
+    ej:'EXEC SQL UPDATE BIBLIOTECA/PRESTAMOS SET PRESEST=\'D\' WHERE PRESCOD=:pCod;\nIF SQLSTATE = \'00000\';\n  EXEC SQL COMMIT;\nELSE;\n  EXEC SQL ROLLBACK;\nENDIF;' },
+  { cmd:'DECLARE HANDLER', cat:'trans', desc:'Manejador de excepciones SQL dentro de procedimientos almacenados SQL (SQL PL).',
+    uso:'Capturar SQLEXCEPTION o SQLWARNING de forma automática en un Stored Procedure.',
+    ej:'DECLARE CONTINUE HANDLER FOR SQLEXCEPTION\nBEGIN\n  SET pEstado = SQLSTATE;\n  ROLLBACK;\nEND;' },
+  { cmd:'JSON_OBJECT / JSON_ARRAY', cat:'json', desc:'Funciones SQL integradas para construir documentos JSON directamente desde DB2.',
+    uso:'Creación de APIs REST e integración de datos estructurados.',
+    ej:'EXEC SQL\n  SELECT JSON_OBJECT(\n    \'codigo\' VALUE TRIM(LIBCOD),\n    \'titulo\' VALUE TRIM(LIBTTL),\n    \'disponibles\' VALUE LIBDIS\n  )\n  INTO :vJson\n  FROM BIBLIOTECA/LIBROS WHERE LIBCOD = :pCod;' },
+  { cmd:'LISTAGG', cat:'json', desc:'Concatena valores de múltiples filas en una sola cadena con un delimitador.',
+    uso:'Construcción de arrays JSON o listas separadas por comas desde SQL.',
+    ej:'EXEC SQL\n  SELECT LISTAGG(JSON_OBJECT(\'id\' VALUE LIBCOD), \',\')\n  INTO :vArrayJson\n  FROM BIBLIOTECA/LIBROS\n  WHERE LIBDIS > 0;' },
+  { cmd:'QSYS2.IFS_READ_UTF8', cat:'ibmi', desc:'IBM i Service que lee un archivo plano del IFS como si fuera una tabla SQL.',
+    uso:'Procesar CSV, JSON o logs directamente con consultas SELECT SQL.',
+    ej:'SELECT LINE FROM TABLE(\n  QSYS2.IFS_READ_UTF8(PATH_NAME => \'/tmp/datos.csv\')\n);' },
+  { cmd:'QSYS2.IFS_WRITE_UTF8', cat:'ibmi', desc:'IBM i Service para escribir contenido a un archivo en el IFS desde SQL.',
+    uso:'Generación rápida de reportes o exportaciones a archivos plano.',
+    ej:'EXEC SQL\n  CALL QSYS2.IFS_WRITE_UTF8(\n    PATH_NAME   => \'/tmp/salida.txt\',\n    LINE        => :vTexto,\n    OVERWRITE   => \'REPLACE\'\n  );\n' },
+  { cmd:'QSYS2.PLAN_CACHE_SUMMARY', cat:'ibmi', desc:'Vista del catálogo del sistema para diagnosticar consultas SQL con alto tiempo de CPU o Table Scans.',
+    uso:'Optimización de rendimiento en DB2 for i.',
+    ej:'SELECT STATEMENT_TEXT, TOTAL_TIME_MS, STATEMENT_COUNT\nFROM QSYS2.PLAN_CACHE_SUMMARY\nORDER BY TOTAL_TIME_MS DESC\nFETCH FIRST 10 ROWS ONLY;' },
+  { cmd:'CREATE PROCEDURE (SQL PL)', cat:'sp', desc:'Crea un Stored Procedure de base de datos escrito en lenguaje SQL nativo DB2.',
+    uso:'Encapsular lógica de negocio de acceso a datos para ser llamada desde RPGLE, Java, Node.js o APIs.',
+    ej:'CREATE OR REPLACE PROCEDURE BIBLIOTECA/PRC_ACTDIS (\n  IN pCod CHAR(7),\n  OUT pResult CHAR(5)\n)\nLANGUAGE SQL\nBEGIN\n  UPDATE BIBLIOTECA/LIBROS SET LIBDIS = LIBDIS + 1 WHERE LIBCOD = pCod;\n  SET pResult = SQLSTATE;\nEND;' }
+];
+
+
+/* ════════════════════════════════════════════════════════════════
+   SISTEMA UNIFICADO DE ACORDEONES / REFERENCIAS
+═══════════════════════════════════════════════════════════════ */
+let refState = {
+  acordeon:  { search: '', filter: '*' },
+  rpg:       { search: '', filter: '*' },
+  rpgle:     { search: '', filter: '*' },
+  rpglefree: { search: '', filter: '*' },
+  sqlrpgle:  { search: '', filter: '*' }
+};
 
 function showAcordeon() {
   state.currentView = 'acordeon';
   state.currentPhase = null;
   saveState();
-  document.getElementById('page-title').textContent = 'Acordeón de Comandos IBM i';
-  document.getElementById('page-sub').textContent = 'Búsqueda inteligente · ' + CMDS.length + ' comandos AS/400 · Descripción + Uso habitual + Ejemplo';
+  document.getElementById('page-title').textContent = 'Acordeón de Comandos CL (IBM i)';
+  document.getElementById('page-sub').textContent = 'Búsqueda inteligente · ' + CMDS.length + ' comandos AS/400 · Ejemplos para copiar';
   buildPhaseTabs();
   buildSidebar();
-  acSearch = '';
-  acFilter = '*';
-  renderAcordeon();
+  renderRefPage('acordeon', 'Acordeón de Comandos CL', 'Comandos del sistema operativo IBM i (AS/400)', CMDS, CATS, '📖');
 }
 
-function renderAcordeon() {
-  const q = acSearch.toLowerCase().trim();
-  const filtered = CMDS.filter(c => {
-    const matchCat = acFilter === '*' || c.cat === acFilter;
+function showRPG() {
+  state.currentView = 'rpg';
+  state.currentPhase = null;
+  saveState();
+  document.getElementById('page-title').textContent = 'Acordeón RPG III / OPM';
+  document.getElementById('page-sub').textContent = 'Referencia de Formato Fijo (H, F, E, I, C, O) y OpCodes nativos';
+  buildPhaseTabs();
+  buildSidebar();
+  renderRefPage('rpg', 'RPG III / OPM RPG (Formato Fijo)', 'Especificaciones (H,F,E,I,C,O), OpCodes clásicos y sintaxis fija de 80 columnas', DATA_RPG, CATS_RPG, '📜');
+}
+
+function showRPGLE() {
+  state.currentView = 'rpgle';
+  state.currentPhase = null;
+  saveState();
+  document.getElementById('page-title').textContent = 'Acordeón RPGLE / ILE RPG';
+  document.getElementById('page-sub').textContent = 'Especificaciones D-Spec, C-Spec EVAL, %BIFs, subprocedimientos y modelo ILE';
+  buildPhaseTabs();
+  buildSidebar();
+  renderRefPage('rpgle', 'RPGLE / ILE RPG (Fijo y Mixto)', 'D-Specs, EVAL, CallPrototyped, %BIFs clásicas y subprocedimientos', DATA_RPGLE, CATS_RPGLE, '⚙️');
+}
+
+function showRPGLEFree() {
+  state.currentView = 'rpglefree';
+  state.currentPhase = null;
+  saveState();
+  document.getElementById('page-title').textContent = 'Acordeón RPGLE **FREE';
+  document.getElementById('page-sub').textContent = 'Sintaxis totalmente libre (CTL-OPT, DCL-F, DCL-S, DCL-DS, DCL-PROC, %BIFs)';
+  buildPhaseTabs();
+  buildSidebar();
+  renderRefPage('rpglefree', 'RPGLE **FREE (Totalmente Libre)', 'Sintaxis moderna libre de columnas, directivas, estructuras y %BIFs', DATA_RPGLEFREE, CATS_RPGLEFREE, '🚀');
+}
+
+function showSQLRPGLE() {
+  state.currentView = 'sqlrpgle';
+  state.currentPhase = null;
+  saveState();
+  document.getElementById('page-title').textContent = 'Acordeón SQLRPGLE & DB2 for i';
+  document.getElementById('page-sub').textContent = 'EXEC SQL, Cursores, DML, Transacciones, JSON DB2 y Services QSYS2';
+  buildPhaseTabs();
+  buildSidebar();
+  renderRefPage('sqlrpgle', 'SQLRPGLE & DB2 for i', 'Sentencias SQL embebidas, cursores, transacciones y servicios DB2 for i', DATA_SQLRPGLE, CATS_SQLRPGLE, '🗄️');
+}
+
+function renderRefPage(refKey, pageTitle, pageSub, dataset, categories, iconStr) {
+  const st = refState[refKey] || { search: '', filter: '*' };
+  const q = st.search.toLowerCase().trim();
+  const filtered = dataset.filter(c => {
+    const matchCat = st.filter === '*' || c.cat === st.filter;
     if (!matchCat) return false;
     if (!q) return true;
+    const catLabel = (categories[c.cat] ? categories[c.cat].label : c.cat).toLowerCase();
     return c.cmd.toLowerCase().includes(q)
         || c.desc.toLowerCase().includes(q)
         || c.uso.toLowerCase().includes(q)
         || c.ej.toLowerCase().includes(q)
-        || CATS[c.cat].label.toLowerCase().includes(q);
+        || catLabel.includes(q);
   });
 
   const catCounts = {};
-  CMDS.forEach(c => { catCounts[c.cat] = (catCounts[c.cat]||0)+1; });
+  dataset.forEach(c => { catCounts[c.cat] = (catCounts[c.cat] || 0) + 1; });
 
   document.getElementById('content').innerHTML = `
     <div class="ac-page">
       <div class="ac-hero">
-        <h2>📖 Acordeón de Comandos IBM i / AS400</h2>
-        <p>Busca por nombre del comando, descripción o uso habitual. Filtra por categoría.</p>
+        <h2>${iconStr} ${pageTitle}</h2>
+        <p>${pageSub}</p>
         <div class="ac-search-wrap">
           <span class="ac-search-icon">🔍</span>
-          <input class="ac-search" id="ac-input" type="text"
-            placeholder="Buscar: CRTPF, 'crear archivo', 'journaling', 'depurar'..."
-            value="${acSearch}"
-            oninput="acOnInput(this.value)"
+          <input class="ac-search" id="ref-input" type="text"
+            placeholder="Buscar por instrucción, sentencia, BIF, descripción o ejemplo..."
+            value="${st.search}"
+            oninput="refOnInput('${refKey}', this.value)"
             autocomplete="off" spellcheck="false">
         </div>
         <div class="ac-filter-wrap">
-          <button class="ac-filter ${acFilter==='*'?'active':''}"
-                  style="${acFilter==='*'?'background:var(--purple2);border-color:var(--purple2)':''}"
-                  onclick="acSetFilter('*')">Todos (${CMDS.length})</button>
-          ${Object.entries(CATS).map(([k,v]) => `
-            <button class="ac-filter ${acFilter===k?'active':''}"
-                    style="${acFilter===k?`background:${v.color};border-color:${v.color}`:`border-color:${v.color}33;color:${v.color}`}"
-                    onclick="acSetFilter('${k}')">
+          <button class="ac-filter ${st.filter==='*'?'active':''}"
+                  style="${st.filter==='*'?'background:var(--purple2);border-color:var(--purple2)':''}"
+                  onclick="refSetFilter('${refKey}', '*')">Todos (${dataset.length})</button>
+          ${Object.entries(categories).map(([k,v]) => `
+            <button class="ac-filter ${st.filter===k?'active':''}"
+                    style="${st.filter===k?`background:${v.color};border-color:${v.color}`:`border-color:${v.color}33;color:${v.color}`}"
+                    onclick="refSetFilter('${refKey}', '${k}')">
               ${v.label} (${catCounts[k]||0})
             </button>
           `).join('')}
@@ -4468,34 +5282,33 @@ function renderAcordeon() {
       <div class="ac-stats-bar">
         <span>Mostrando</span>
         <span class="ac-count">${filtered.length}</span>
-        <span>de ${CMDS.length} comandos</span>
+        <span>de ${dataset.length} elementos</span>
         ${q ? `<span>· búsqueda: "<strong style="color:var(--purple)">${q}</strong>"</span>` : ''}
       </div>
       <div class="ac-body">
-        <div class="ac-grid" id="ac-grid">
+        <div class="ac-grid" id="ref-grid">
           ${filtered.length === 0
             ? `<div class="ac-no-results">
                 <div class="icon">🔎</div>
-                <p>No se encontraron comandos para "<strong>${q}</strong>"</p>
-                <p style="margin-top:6px;font-size:11px">Intenta con parte del nombre o una palabra de la descripción</p>
+                <p>No se encontraron resultados para "<strong>${q}</strong>"</p>
+                <p style="margin-top:6px;font-size:11px">Intenta con otro término o limpia el filtro de categoría</p>
                </div>`
-            : filtered.map(c => renderCmdCard(c, q)).join('')
+            : filtered.map(c => renderRefCard(c, q, categories)).join('')
           }
         </div>
       </div>
     </div>`;
-  // Focus en el input después de render
-  setTimeout(() => { const inp = document.getElementById('ac-input'); if(inp) inp.focus(); }, 50);
+
+  setTimeout(() => { const inp = document.getElementById('ref-input'); if(inp) inp.focus(); }, 50);
 }
 
-function renderCmdCard(c, q) {
-  const cat = CATS[c.cat];
+function renderRefCard(c, q, categories) {
+  const cat = categories[c.cat] || { label: c.cat, color: 'var(--blue)', bg: 'var(--bg3)' };
   const hl = (txt) => {
     if (!q) return txt;
     const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
     return txt.replace(re, '<mark style="background:rgba(188,140,255,.25);color:var(--purple);border-radius:2px">$1</mark>');
   };
-  const ejLines = c.ej.split('\n').join('\n');
   return `
   <div class="ac-card">
     <div class="ac-card-top">
@@ -4508,49 +5321,42 @@ function renderCmdCard(c, q) {
         <b>💡 Uso habitual</b>
         ${hl(c.uso)}
       </div>
-      <div class="ac-example">${c.ej.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="code-wrap" style="margin-top:6px;">
+        <button class="btn-copy" style="top:4px;right:4px;" onclick="copyToClipboard(decodeURIComponent('${encodeURIComponent(c.ej)}'), this)">📋 Copiar</button>
+        <div class="ac-example">${c.ej.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      </div>
     </div>
   </div>`;
 }
 
-let acDebounce;
-function acOnInput(val) {
-  acSearch = val;
-  clearTimeout(acDebounce);
-  acDebounce = setTimeout(() => {
-    const grid = document.getElementById('ac-grid');
-    if (!grid) { renderAcordeon(); return; }
-    const q = val.toLowerCase().trim();
-    const filtered = CMDS.filter(c => {
-      const matchCat = acFilter === '*' || c.cat === acFilter;
-      if (!matchCat) return false;
-      if (!q) return true;
-      return c.cmd.toLowerCase().includes(q)
-          || c.desc.toLowerCase().includes(q)
-          || c.uso.toLowerCase().includes(q)
-          || c.ej.toLowerCase().includes(q)
-          || CATS[c.cat].label.toLowerCase().includes(q);
-    });
-    const statsEl = document.querySelector('.ac-stats-bar');
-    if (statsEl) {
-      statsEl.innerHTML = `
-        <span>Mostrando</span>
-        <span class="ac-count">${filtered.length}</span>
-        <span>de ${CMDS.length} comandos</span>
-        ${q ? `<span>· búsqueda: "<strong style="color:var(--purple)">${q}</strong>"</span>` : ''}`;
-    }
-    grid.innerHTML = filtered.length === 0
-      ? `<div class="ac-no-results"><div class="icon">🔎</div>
-          <p>No se encontraron comandos para "<strong>${q}</strong>"</p>
-          <p style="margin-top:6px;font-size:11px">Intenta con parte del nombre o una descripción</p>
-         </div>`
-      : filtered.map(c => renderCmdCard(c, q)).join('');
+let refDebounce;
+function refOnInput(refKey, val) {
+  if (!refState[refKey]) refState[refKey] = { search: '', filter: '*' };
+  refState[refKey].search = val;
+  clearTimeout(refDebounce);
+  refDebounce = setTimeout(() => {
+    const fnMap = {
+      acordeon: showAcordeon,
+      rpg: showRPG,
+      rpgle: showRPGLE,
+      rpglefree: showRPGLEFree,
+      sqlrpgle: showSQLRPGLE
+    };
+    if (fnMap[refKey]) fnMap[refKey]();
   }, 150);
 }
 
-function acSetFilter(cat) {
-  acFilter = cat;
-  renderAcordeon();
+function refSetFilter(refKey, cat) {
+  if (!refState[refKey]) refState[refKey] = { search: '', filter: '*' };
+  refState[refKey].filter = cat;
+  const fnMap = {
+    acordeon: showAcordeon,
+    rpg: showRPG,
+    rpgle: showRPGLE,
+    rpglefree: showRPGLEFree,
+    sqlrpgle: showSQLRPGLE
+  };
+  if (fnMap[refKey]) fnMap[refKey]();
 }
 
 /* ════════════════════════════════════════════════════════════════
